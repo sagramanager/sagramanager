@@ -1,0 +1,1 @@
+export var Logs = []; //Used for loading logs in UI
