@@ -55,6 +55,7 @@ function initializeServer() {
 			res.status(429).send('Too Many Requests');
 		});
 	});
+	app.use(express.static(uiDistPath));
     app.use('/api/v1', apiRouter);
     app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(spec));
 
