@@ -8,15 +8,10 @@ import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms'
 })
 export class NewOrderComponent implements OnInit {
 
-  userForm: any;
   constructor() {
   }
 
   ngOnInit(): void {
-  }
-
-  onSubmit(form: any): void {
-    console.log(this.userForm.value);
   }
 
 }

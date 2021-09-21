@@ -1,0 +1,11 @@
+table {
+  margin-bottom: 0 !important;
+}
+td:first-child {
+  width: 2%;
+  white-space: nowrap;
+}
+.collapse_group_btn {
+    width: 5%;
+    text-align: center;
+}

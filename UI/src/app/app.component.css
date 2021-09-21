@@ -1,0 +1,16 @@
+li a {
+    color: #6c757d;
+}
+#footerLogo {
+    width: 7em;
+}
+@media (max-width: 768px) {
+    .additionalFooterContent {
+        display: none;
+    }
+}
+@media (min-width: 768px) {
+    .additionalFooterContent {
+        display: block;
+    }
+}

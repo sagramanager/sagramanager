@@ -1,52 +1,126 @@
 <div class="container">
-    <div *ngIf="!submitted">
-        <h1>Reactive Form</h1>
-        <form [formGroup]="heroForm" (ngSubmit)="onSubmit(heroForm)">
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" class="form-control" formControlName="name" />
-                <div class="alert alert-danger" [hidden]="heroForm.controls.name.valid">Name is required</div>
-            </div>
-            <div class="form-group">
-                <label for="alterEgo">Alter Ego</label>
-                <input type="text" class="form-control" formControlName="alterEgo" />
-                <div class="alert alert-danger" [hidden]="heroForm.controls.alterEgo.valid">Alter Ego is required</div>
-            </div>
-            <div class="form-group">
-                <label for="email">Hero Email</label>
-                <input type="email" class="form-control" formControlName="email" />
-                <div class="alert alert-danger" [hidden]="heroForm.controls.email.valid">Email is required and must be a valid email pattern</div>
-            </div>
-            <div class="form-group">
-                <label for="power">Hero Power</label>
-                <select class="form-control" formControlName="power">
-                  <option *ngFor="let p of powers" [value]="p">{{p}}</option>
-                </select>
-                <div class="alert alert-danger" [hidden]="heroForm.controls.power.valid">Power is required</div>
-            </div>
-            <button type="submit" class="btn btn-default" [disabled]="!heroForm.valid">Submit</button> 
-        </form>  
+  <div *ngIf="!submitted">
+    <h1>Reactive Form</h1>
+    <form [formGroup]="heroForm" (ngSubmit)="onSubmit(heroForm)">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" class="form-control" formControlName="name" />
+        <div class="alert alert-danger" [hidden]="heroForm.controls.name.valid">Name is required</div>
+      </div>
+      <div class="form-group">
+        <label for="alterEgo">Alter Ego</label>
+        <input type="text" class="form-control" formControlName="alterEgo" />
+        <div class="alert alert-danger" [hidden]="heroForm.controls.alterEgo.valid">Alter Ego is required</div>
+      </div>
+      <div class="form-group">
+        <label for="email">Hero Email</label>
+        <input type="email" class="form-control" formControlName="email" />
+        <div class="alert alert-danger" [hidden]="heroForm.controls.email.valid">Email is required and must be a valid
+          email pattern</div>
+      </div>
+      <div class="form-group">
+        <label for="power">Hero Power</label>
+        <select class="form-control" formControlName="power">
+          <option *ngFor="let p of powers" [value]="p">{{p}}</option>
+        </select>
+        <div class="alert alert-danger" [hidden]="heroForm.controls.power.valid">Power is required</div>
+      </div>
+      <button type="submit" class="btn btn-default" [disabled]="!heroForm.valid">Submit</button>
+    </form>
+  </div>
+
+  <div *ngIf="submitted">
+    <h2>You submitted the following:</h2>
+    <div class="row">
+      <div class="col-md-2">Name</div>
+      <div class="col-md-10 pull-left">{{ submittedModel.name }}</div>
     </div>
-                                
-    <div *ngIf="submitted">
-        <h2>You submitted the following:</h2>
-        <div class="row">
-            <div class="col-md-2">Name</div>
-            <div class="col-md-10 pull-left">{{ submittedModel.name }}</div>
-        </div>
-        <div class="row">
-            <div class="col-md-2">Alter Ego</div>
-            <div class="col-md-10 pull-left">{{ submittedModel.alterEgo }}</div>
-        </div>
-        <div class="row">
-            <div class="col-md-2">Hero Email</div>
-            <div class="col-md-10 pull-left">{{ submittedModel.email }}</div>
-        </div>
-        <div class="row">
-            <div class="col-md-2">Power</div>
-            <div class="col-md-10 pull-left">{{ submittedModel.power }}</div>
-        </div>
-        <br />
-        <button class="btn btn-default" (click)="submitted=false">Edit</button>
-    </div>    
+    <div class="row">
+      <div class="col-md-2">Alter Ego</div>
+      <div class="col-md-10 pull-left">{{ submittedModel.alterEgo }}</div>
+    </div>
+    <div class="row">
+      <div class="col-md-2">Hero Email</div>
+      <div class="col-md-10 pull-left">{{ submittedModel.email }}</div>
+    </div>
+    <div class="row">
+      <div class="col-md-2">Power</div>
+      <div class="col-md-10 pull-left">{{ submittedModel.power }}</div>
+    </div>
+    <br />
+    <button class="btn btn-default" (click)="submitted=false">Edit</button>
+  </div>
+</div>
+<div class="container">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Cliente</th>
+        <th>Coperti</th>
+        <th>Tavolo</th>
+        <th>Cassiere</th>
+        <th>Note</th>
+        <th>Asporto</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Mario</td>
+        <td>7</td>
+        <td>9</td>
+        <td>Cassiere 1</td>
+        <td></td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="checkTakeAway1">
+            <label class="form-check-label" for="checkTakeAway1">Asporto</label>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Mario</td>
+        <td>7</td>
+        <td>9</td>
+        <td>Cassiere 1</td>
+        <td></td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="checkTakeAway2">
+            <label class="form-check-label" for="checkTakeAway2">Asporto</label>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Mario</td>
+        <td>7</td>
+        <td>9</td>
+        <td>Cassiere 1</td>
+        <td></td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="checkTakeAway3">
+            <label class="form-check-label" for="checkTakeAway3">Asporto</label>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Mario</td>
+        <td>7</td>
+        <td>9</td>
+        <td>Cassiere 1</td>
+        <td></td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="checkTakeAway4">
+            <label class="form-check-label" for="checkTakeAway4">Asporto</label>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>
