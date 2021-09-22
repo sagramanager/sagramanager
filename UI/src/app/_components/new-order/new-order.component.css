@@ -26,3 +26,13 @@ td:first-child {
   margin-bottom: auto;
   font-size: 1.5em;
 }
+@media (max-width: 425px) {
+  .buttons_col {
+    width: 100%;
+  }
+}
+@media (min-width: 425px) {
+  .buttons_col {
+    width: 33.33333333%;
+  }
+}
