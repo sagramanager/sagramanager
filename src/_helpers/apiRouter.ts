@@ -4,12 +4,125 @@ import { Logs } from '../_globals/logs';
 import { version } from './version';
 import { connection } from './db';
 import { User } from '../entity/User';
+import { Order } from '../entity/Order';
+import { Foodstuff } from '../entity/Foodstuff';
 import { addUser, authenticate, validateAccessToken, requireRole } from '../_helpers/auth';
+import { validateOrderFoodstuffs } from './apiRoutesValidators';
 import { AddUserSettings } from '../_models/AddUserSettings';
 
 export var apiRouter = express.Router();
 apiRouter.use(express.json());
 apiRouter.use(express.urlencoded({ extended: false }));
+
+/**
+ * GET /foodstuffs
+ * @description Get foodstuffs list.
+ * @response 200 - List of foodstuffs.
+ * @responseContent {Foodstuff[]} 200.application/json
+ * @tag foodstuff
+ */
+ apiRouter.get('/foodstuffs', function(req, res) {
+    let foodstuffRepository = connection.getRepository(Foodstuff);
+    foodstuffRepository.find().then((foodstuffs: Foodstuff[]) => {
+        res.json(foodstuffs);
+    });
+});
+
+/**
+ * POST /foodstuffs
+ * @description Add new foodstuff.
+ * @response 400 - Api request malformed.
+ * @responseContent {ValidationError} 400.application/json
+ * @response 200 - Add foodstuff response.
+ * @responseContent {FoodstuffAdd} 200.application/json
+ * @bodyContent {FoodstuffAddRequest} application/x-www-form-urlencoded
+ * @bodyContent {FoodstuffAddRequest} application/json
+ * @bodyRequired
+ * @tag foodstuff
+ */
+ apiRouter.post('/foodstuffs', 
+    body('name').isLength({ min: 5 }),
+    body('price').isLength({ min: 5 }),
+ function(req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    let foodstuff = new Foodstuff();
+    foodstuff.name = req.body.name;
+    if(req.body.shortName) foodstuff.shortName = req.body.shortName;
+    if(req.body.description) foodstuff.description = req.body.description;
+    foodstuff.price = req.body.price;
+
+    connection.getRepository(Foodstuff).save(foodstuff).then((foodstuff: Foodstuff) => {
+        res.json({
+            status: "ok",
+            foodstuff: foodstuff
+        });
+    });
+});
+
+/**
+ * GET /orders
+ * @description Get orders list.
+ * @response 200 - List of orders.
+ * @responseContent {Order[]} 200.application/json
+ * @tag orders
+ */
+ apiRouter.get('/orders', function(req, res) {
+    let orderRepository = connection.getRepository(Order);
+    orderRepository.find().then((orders: Order[]) => {
+        res.json(orders);
+    });
+});
+
+/**
+ * POST /orders
+ * @description Add new order.
+ * @response 400 - Api request malformed.
+ * @responseContent {ValidationError} 400.application/json
+ * @response 200 - Add order response.
+ * @responseContent {OrderAdd} 200.application/json
+ * @bodyContent {OrderAddRequest} application/json
+ * @bodyRequired
+ * @tag orders
+ */
+ apiRouter.post('/orders',
+    body('foodstuffs').isLength({ min: 5 }).custom(validateOrderFoodstuffs()),
+ function(req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    let order = new Order();
+    order.customer = "customer";
+    order.places = 7;
+    order.tableNumber = 9;
+    order.waiter = "Paulo";
+    order.notes = "Note blablabla";
+    order.takeAway = false;
+    order.foodstuff = [
+        {
+            foodstuff: 1,
+            amount: 2,
+            notes: "nota1"
+        },
+        {
+            foodstuff: 2,
+            amount: 8,
+            notes: "nota2"
+        }
+    ];
+
+    connection.getRepository(Order).save(order).then((order: Order) => {
+        res.json({
+            status: "ok",
+            order: order
+        });
+    });
+});
 
 /**
  * GET /users
@@ -22,9 +135,7 @@ apiRouter.get('/users', function(req, res) {
     let userRepository = connection.getRepository(User);
     userRepository.find().then((users: User[]) => {
         users.forEach((u) => { delete u["password"] });
-        res.json({
-            users: users
-        });
+        res.json(users);
     });
 });
 

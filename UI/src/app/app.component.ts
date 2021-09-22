@@ -9,6 +9,7 @@ import { LocationBackService } from './_services/location-back.service';
 })
 export class AppComponent {
   title = 'SagraManager';
+  showMenu = false;
 
   constructor(
     public navbarVisibilityService: NavbarVisibilityService,

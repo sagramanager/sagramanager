@@ -1,32 +1,32 @@
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark" *ngIf="navbarVisibilityService.navbarIsVisible">
   <div class="container">
-    <button class="navbar-toggler" type="button">
+    <button class="navbar-toggler" type="button" (click)="showMenu = !showMenu">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
+    <div class="collapse navbar-collapse" id="navbarCollapse" [class.show]="showMenu">
       <ul class="navbar-nav me-auto mb-2 mb-md-0">
         <li class="nav-item">
-          <a class="nav-link" routerLinkActive="active" routerLink="/home">Home</a>
+          <a class="nav-link" (click)="showMenu = false" routerLinkActive="active" routerLink="/home">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLinkActive="active" routerLink="/new_order">Crea ordinazione</a>
+          <a class="nav-link" (click)="showMenu = false" routerLinkActive="active" routerLink="/new_order">Crea ordinazione</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLinkActive="active" routerLink="/orders">Ordinazioni</a>
+          <a class="nav-link" (click)="showMenu = false" routerLinkActive="active" routerLink="/orders">Ordinazioni</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLinkActive="active" routerLink="/stock">Listino</a>
+          <a class="nav-link" (click)="showMenu = false" routerLinkActive="active" routerLink="/stock">Listino</a>
         </li>
       </ul>
       <ul class="navbar-nav mb-2 mb-md-0">
         <li class="nav-item">
-          <a class="nav-link" routerLinkActive="active" routerLink="/stats">Statistiche</a>
+          <a class="nav-link" (click)="showMenu = false" routerLinkActive="active" routerLink="/stats">Statistiche</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLinkActive="active" routerLink="/settings">Impostazioni</a>
+          <a class="nav-link" (click)="showMenu = false" routerLinkActive="active" routerLink="/settings">Impostazioni</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLinkActive="active" routerLink="/about">Informazioni</a>
+          <a class="nav-link" (click)="showMenu = false" routerLinkActive="active" routerLink="/about">Informazioni</a>
         </li>
       </ul>
     </div>

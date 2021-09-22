@@ -12,6 +12,10 @@ servers:
     description: "API server"
 
 tags:
+  - name: "foodstuff"
+    description: "Foodstuff operations"
+  - name: "orders"
+    description: "Orders operations"
   - name: "users"
     description: "Operations to other users"
   - name: "user"
@@ -21,6 +25,105 @@ tags:
 
 components:
   schemas:
+    Foodstuff:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        shortName:
+          type: string
+        description:
+          type: string
+        price:
+          type: string
+    FoodstuffAddRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        shortName:
+          type: string
+        description:
+          type: string
+        price:
+          type: string
+      required:
+        - name
+        - price
+    FoodstuffAdd:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "ok"
+        foodstuff:
+          $ref: '#/components/schemas/Foodstuff'
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+        customer:
+          type: string
+        places:
+          type: number
+        tableNumber:
+          type: string
+        waiter:
+          type: string
+        notes:
+          type: string
+        takeAway:
+          type: boolean
+        foodstuffs:
+          type: array
+          items:
+            type: object
+            properties:
+              foodstuff:
+                type: number
+              amount:
+                type: number
+              notes:
+                type: string
+    OrderAddRequest:
+      type: object
+      properties:
+        customer:
+          type: string
+        places:
+          type: number
+        tableNumber:
+          type: string
+        waiter:
+          type: string
+        notes:
+          type: string
+        takeAway:
+          type: boolean
+        foodstuffs:
+          type: array
+          items:
+            type: object
+            properties:
+              foodstuff:
+                type: number
+              amount:
+                type: number
+              notes:
+                type: string
+      required:
+        - foodstuffs
+    OrderAdd:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "ok"
+        order:
+          $ref: '#/components/schemas/Order'
     User:
       type: object
       properties:
