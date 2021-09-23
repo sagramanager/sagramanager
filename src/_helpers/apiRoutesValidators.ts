@@ -2,7 +2,7 @@ import { connection } from './db';
 import { Order } from '../entity/Order';
 
 const checkIfFoodstuffExists = async (id): Promise<boolean> => {
-    return false;
+    return true; //TODO: check if foodstuff exists in DB
 }
 
 //@ts-ignore
