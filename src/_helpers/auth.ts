@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { AddUserSettings } from '../_models/AddUserSettings';
 import { AuthenticateSuccessResponse } from '../_models/AuthenticateSuccessResponse';
+import { logger } from "./logger";
 
 export function hashPassword(password: string): string {
     return bcrypt.hashSync(password, 10);
@@ -31,6 +32,7 @@ export function addUser(settings: AddUserSettings): Promise<User> {
 
         try {
             connection.getRepository(User).save(user).then((user: User) => {
+                logger(`User '${user.username}' was added`, 'info');
                 resolve(user);
             });
         } catch(e) {

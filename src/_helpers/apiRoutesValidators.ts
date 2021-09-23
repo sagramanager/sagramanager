@@ -1,8 +1,14 @@
 import { connection } from './db';
-import { Order } from '../entity/Order';
+import { Foodstuff } from '../entity/Foodstuff';
 
-const checkIfFoodstuffExists = async (id): Promise<boolean> => {
-    return true; //TODO: check if foodstuff exists in DB
+const checkIfFoodstuffExists = (id): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+        connection.getRepository(Foodstuff).count({ id: id }).then((count) => {
+            resolve(count === 1);
+        }).catch((err) => {
+            resolve(false);
+        });
+    });
 }
 
 //@ts-ignore
@@ -14,7 +20,7 @@ export const validateOrderFoodstuffs = () => {
     return (foodstuffs, { req }): Promise<boolean> => {
         return new Promise((resolve, reject) => {
             if (foodstuffs.length && foodstuffs.length > 0) {
-                foodstuffs.forEachAsync((foodstuff) => {
+                foodstuffs.forEachAsync(async (foodstuff) => {
                     if (
                         (!foodstuff.foodstuff || parseInt(foodstuff.foodstuff) === NaN) ||
                         (!foodstuff.amount || parseInt(foodstuff.amount) === NaN) ||
@@ -22,11 +28,10 @@ export const validateOrderFoodstuffs = () => {
                     ) {
                         reject('Invalid foodstuff object');
                     }
-                    checkIfFoodstuffExists(foodstuff.foodstuff).then((foodstuffExists) => {
-                        if (!foodstuffExists) {
-                            reject(`Foodstuff with id ${foodstuff.foodstuff} does not exist`);
-                        }
-                    });
+                    let foodstuffExists = await checkIfFoodstuffExists(foodstuff.foodstuff);
+                    if (!foodstuffExists) {
+                        reject(`Foodstuff with id ${foodstuff.foodstuff} does not exist`);
+                    }
                 }).then(() => {
                     resolve(true);
                 });

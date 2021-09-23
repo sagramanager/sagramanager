@@ -24,6 +24,300 @@ tags:
     description: "Operations regarding login or token validation"
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  requestBodies:
+    AddFoodstuffRequest:
+      required: true
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              shortName:
+                type: string
+              description:
+                type: string
+              price:
+                type: string
+            required:
+              - name
+              - price
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              shortName:
+                type: string
+              description:
+                type: string
+              price:
+                type: string
+            required:
+              - name
+              - price
+    AddOrderRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              customer:
+                type: string
+              places:
+                type: number
+              tableNumber:
+                type: string
+              waiter:
+                type: string
+              notes:
+                type: string
+              takeAway:
+                type: boolean
+              foodstuffs:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    foodstuff:
+                      type: number
+                    amount:
+                      type: number
+                    notes:
+                      type: string
+            required:
+              - foodstuffs
+    AddUserRequest:
+      required: true
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+              name:
+                type: string
+              password:
+                type: string
+            required:
+              - username
+              - password
+        application/json:
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+              name:
+                type: string
+              password:
+                type: string
+            required:
+              - username
+              - password
+    LoginRequest:
+      required: true
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+              password:
+                type: string
+            required:
+              - username
+              - password
+        application/json:
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+              password:
+                type: string
+            required:
+              - username
+              - password
+    ValidateTokenRequest:
+      required: true
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            type: object
+            properties:
+              access_token:
+                type: string
+            required:
+              - access_token
+        application/json:
+          schema:
+            type: object
+            properties:
+              access_token:
+                type: string
+            required:
+              - access_token
+
+  responses:
+    FoodstuffsListResponse:
+      description: "List of foodstuffs"
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Foodstuff'
+    AddFoodstuffResponse:
+      description: "Foodstuff added"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: "ok"
+              foodstuff:
+                $ref: '#/components/schemas/Foodstuff'
+    OrdersListResponse:
+      description: "List of orders"
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Order'
+    AddOrderResponse:
+      description: "Order successfully added"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: "ok"
+              order:
+                $ref: '#/components/schemas/Order'
+    UsersListResponse:
+      description: "List of users"
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/User'
+    AddUserResponse:
+      description: "User added successfully"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: "ok"
+              user:
+                $ref: '#/components/schemas/User'
+    ProfileResponse:
+      description: "User profile"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+    AuthResponse:
+      description: "Login response"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              access_token:
+                type: string
+              user:
+                $ref: '#/components/schemas/User'
+    TokenValidationSuccessfull:
+      description: "Token validation successfull"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: "ok"
+              user:
+                $ref: '#/components/schemas/User'
+    AuthError:
+      description: "Auth error"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: "error"
+              message:
+                type: string
+                example: "Password is incorrect"
+    ValidationError:
+      description: "Validation error"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    msg:
+                      type: string
+                    params:
+                      type: string
+                    location:
+                      type: string
+    VersionResponse:
+      description: "SagraManager version"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              version:
+                type: string
+    LogsResponse:
+      description: "Logs response"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              logs:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Log'
+    PingResponse:
+      description: "Ping response"
+      content:
+        application/plain:
+          schema:
+            type: string
+            example: "pong"
+
   schemas:
     Foodstuff:
       type: object
@@ -38,28 +332,6 @@ components:
           type: string
         price:
           type: string
-    FoodstuffAddRequest:
-      type: object
-      properties:
-        name:
-          type: string
-        shortName:
-          type: string
-        description:
-          type: string
-        price:
-          type: string
-      required:
-        - name
-        - price
-    FoodstuffAdd:
-      type: object
-      properties:
-        status:
-          type: string
-          example: "ok"
-        foodstuff:
-          $ref: '#/components/schemas/Foodstuff'
     Order:
       type: object
       properties:
@@ -88,42 +360,6 @@ components:
                 type: number
               notes:
                 type: string
-    OrderAddRequest:
-      type: object
-      properties:
-        customer:
-          type: string
-        places:
-          type: number
-        tableNumber:
-          type: string
-        waiter:
-          type: string
-        notes:
-          type: string
-        takeAway:
-          type: boolean
-        foodstuffs:
-          type: array
-          items:
-            type: object
-            properties:
-              foodstuff:
-                type: number
-              amount:
-                type: number
-              notes:
-                type: string
-      required:
-        - foodstuffs
-    OrderAdd:
-      type: object
-      properties:
-        status:
-          type: string
-          example: "ok"
-        order:
-          $ref: '#/components/schemas/Order'
     User:
       type: object
       properties:
@@ -133,106 +369,19 @@ components:
           type: string
         name:
           type: string
+        permissions:
+          type: string
         isHidden:
           type: boolean
-    UserList:
+    Log:
       type: object
       properties:
-        users:
-          type: array
-          items:
-            $ref: '#/components/schemas/User'
-    ValidationError:
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            type: object
-            properties:
-              msg:
-                type: string
-              params:
-                type: string
-              location:
-                type: string
-    ValidationSuccessfull:
-      type: object
-      properties:
-        status:
+        datetime:
           type: string
-          example: "ok"
-        user:
-          $ref: '#/components/schemas/User'
-    UserAddRequest:
-      type: object
-      properties:
-        username:
+          format: date-time
+        log:
           type: string
-        name:
+          example: "sagramanager server running on port 4466"
+        type:
           type: string
-        password:
-          type: string
-      required:
-        - username
-        - password
-    UserAdd:
-      type: object
-      properties:
-        status:
-          type: string
-          example: "ok"
-        user:
-          $ref: '#/components/schemas/User'
-    LoginRequest:
-      type: object
-      properties:
-        username:
-          type: string
-        password:
-          type: string
-      required:
-        - username
-        - password
-    AuthResponse:
-      type: object
-      properties:
-        access_token:
-          type: string
-        user:
-          $ref: '#/components/schemas/User'
-    AuthErrorResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          example: "error"
-        message:
-          type: string
-          example: "Password is incorrect"
-    Version:
-      type: object
-      properties:
-        version:
-          type: string
-          example: "1.0.0"
-    Logs:
-      type: object
-      properties:
-        logs:
-          type: array
-          items:
-            type: object
-            properties:
-              datetime:
-                type: string
-                format: date-time
-              log:
-                type: string
-                example: "sagramanager server running on port 4466"
-              type:
-                type: string
-                example: info
-    Pong:
-      type: string
-      example: "pong"
+          example: info
