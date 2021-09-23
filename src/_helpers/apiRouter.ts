@@ -139,8 +139,8 @@ apiRouter.get('/users', requireRole(), function(req, res) {
  * @tag users
  */
 apiRouter.post('/users', requireRole(),
-    body('username').isLength({ min: 5 }),
-    body('password').isLength({ min: 5 }),
+    body('username').isLength({ min: 2 }),
+    body('password').isLength({ min: 2 }),
 function(req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -185,8 +185,8 @@ apiRouter.get('/profile', requireRole(), function(req: any, res) {
  * @tag login
  */
 apiRouter.post('/login',
-    body('username').isLength({ min: 5 }),
-    body('password').isLength({ min: 5 }),
+    body('username').isLength({ min: 2 }),
+    body('password').isLength({ min: 2 }),
 function(req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
