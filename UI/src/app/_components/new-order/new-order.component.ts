@@ -29,7 +29,8 @@ export class NewOrderComponent implements OnInit {
     places: new FormControl(''),
     tableNumber: new FormControl(''),
     waiter: new FormControl(''),
-    notes: new FormControl('')
+    notes: new FormControl(''),
+    takeAway: new FormControl('')
   });
 
   constructor(private modalService: NgbModal, private api: ApiClientService) {
@@ -49,6 +50,11 @@ export class NewOrderComponent implements OnInit {
       console.log(this.foodstuffsListByTypes);
       this.foodstuffs = res;
       this.foodstuffsLoaded = true;
+
+      this.loadOrderFromLocalStorage();
+    });
+    this.initialInfoForm.valueChanges.subscribe((val) => {
+      this.saveOrderInLocalStorage();
     });
   }
 
@@ -69,6 +75,7 @@ export class NewOrderComponent implements OnInit {
     } else {
       this.currentOrderByTypes[foodstuff.type.name][foodstuff.name]["quantity"]++;
     }
+    this.saveOrderInLocalStorage();
     
     console.log(this.currentOrderByTypes);
   }
@@ -102,6 +109,7 @@ export class NewOrderComponent implements OnInit {
   sumFoodstuffQuantity(foodstuffType: string, foodstuffName: string) {
     if(typeof(this.currentOrderByTypes[foodstuffType][foodstuffName]) === "undefined") return;
     this.currentOrderByTypes[foodstuffType][foodstuffName]["quantity"]++;
+    this.saveOrderInLocalStorage();
   }
 
   subtractFoodstuffQuantity(foodstuffType: string, foodstuffName: string) {
@@ -114,6 +122,7 @@ export class NewOrderComponent implements OnInit {
         delete this.currentOrderByTypes[foodstuffType];
       }
     }
+    this.saveOrderInLocalStorage();
   }
 
   getTotalPriceOfCurrentOrder() {
@@ -144,17 +153,35 @@ export class NewOrderComponent implements OnInit {
     return orderObject;
   }
 
+  saveOrderInLocalStorage() {
+    localStorage.setItem('current_order_form_values', JSON.stringify(this.generateOrderObject()));
+  }
+
+  loadOrderFromLocalStorage() {
+    let orderObject = JSON.parse(localStorage.getItem('current_order_form_values') as string);
+    if(orderObject) {
+      this.initialInfoForm.setValue(orderObject.initialInfo);
+      for(let foodstuff of orderObject.foodstuffs) {
+        //TODO: add foodstuff to current order
+      }
+    }
+  }
+
   resetOrder() {
     this.currentOrderByTypes = [];
+    localStorage.removeItem('current_order_form_values');
   }
 
   sendOrder() {
     let orderObject = this.generateOrderObject();
     console.log(orderObject);
     console.log(this.currentOrderByTypes);
+
+    localStorage.removeItem('current_order_form_values');
   }
 
   addFoodstuff(foodstuffModal: any) {
+    //TODO
     this.modalService.open(foodstuffModal);
   }
 
