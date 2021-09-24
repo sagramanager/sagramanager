@@ -6,6 +6,7 @@ import { connection } from './db';
 import { User } from '../entity/User';
 import { Order } from '../entity/Order';
 import { Foodstuff } from '../entity/Foodstuff';
+import { FoodstuffType } from '../entity/FoodstuffType';
 import { addUser, authenticate, validateAccessToken, requireRole } from '../_helpers/auth';
 import { validateOrderFoodstuffs } from './apiRoutesValidators';
 import { AddUserSettings } from '../_models/AddUserSettings';
@@ -13,6 +14,50 @@ import { AddUserSettings } from '../_models/AddUserSettings';
 export var apiRouter = express.Router();
 apiRouter.use(express.json());
 apiRouter.use(express.urlencoded({ extended: false }));
+
+/**
+ * GET /foodstuffTypes
+ * @description Get foodstuff types list.
+ * @responseComponent {AuthError} 401
+ * @responseComponent {FoodstuffTypesListResponse} 200
+ * @security bearerAuth
+ * @tag foodstuffType
+ */
+ apiRouter.get('/foodstuffTypes', requireRole(), function(req, res) {
+    let foodstuffTypeRepository = connection.getRepository(FoodstuffType);
+    foodstuffTypeRepository.find().then((foodstuffTypes: Foodstuff[]) => {
+        res.json(foodstuffTypes);
+    });
+});
+
+/**
+ * POST /foodstuffTypes
+ * @description Add new foodstuff.
+ * @responseComponent {ValidationError} 400
+ * @responseComponent {AuthError} 401
+ * @responseComponent {AddFoodstuffTypeResponse} 200
+ * @bodyComponent {AddFoodstuffTypeRequest}
+ * @security bearerAuth
+ * @tag foodstuffType
+ */
+ apiRouter.post('/foodstuffTypes', requireRole(),
+    body('name').isLength({ min: 1 }),
+ function(req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    let foodstuffType = new FoodstuffType();
+    foodstuffType.name = req.body.name;
+
+    connection.getRepository(FoodstuffType).save(foodstuffType).then((foodstuffType: FoodstuffType) => {
+        res.json({
+            status: "ok",
+            foodstuffType: foodstuffType
+        });
+    });
+});
 
 /**
  * GET /foodstuffs
@@ -24,7 +69,7 @@ apiRouter.use(express.urlencoded({ extended: false }));
  */
  apiRouter.get('/foodstuffs', requireRole(), function(req, res) {
     let foodstuffRepository = connection.getRepository(Foodstuff);
-    foodstuffRepository.find().then((foodstuffs: Foodstuff[]) => {
+    foodstuffRepository.find({ relations: ["type"] }).then((foodstuffs: Foodstuff[]) => {
         res.json(foodstuffs);
     });
 });
@@ -53,11 +98,14 @@ apiRouter.use(express.urlencoded({ extended: false }));
     foodstuff.shortName = req.body.shortName;
     foodstuff.description = req.body.description;
     foodstuff.price = req.body.price;
+    connection.getRepository(FoodstuffType).findOne(req.body.foodstuffTypeId).then((foodstuffType: FoodstuffType) => {
+        foodstuff.type = foodstuffType;
 
-    connection.getRepository(Foodstuff).save(foodstuff).then((foodstuff: Foodstuff) => {
-        res.json({
-            status: "ok",
-            foodstuff: foodstuff
+        connection.getRepository(Foodstuff).save(foodstuff).then((foodstuff: Foodstuff) => {
+            res.json({
+                status: "ok",
+                foodstuff: foodstuff
+            });
         });
     });
 });

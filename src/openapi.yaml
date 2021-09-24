@@ -12,6 +12,8 @@ servers:
     description: "API server"
 
 tags:
+  - name: "foodstuffType"
+    description: "Foodstuff type operations"
   - name: "foodstuff"
     description: "Foodstuff operations"
   - name: "orders"
@@ -30,6 +32,25 @@ components:
       scheme: bearer
 
   requestBodies:
+    AddFoodstuffTypeRequest:
+      required: true
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+            required:
+              - name
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+            required:
+              - name
     AddFoodstuffRequest:
       required: true
       content:
@@ -45,9 +66,12 @@ components:
                 type: string
               price:
                 type: string
+              foodstuffTypeId:
+                type: number
             required:
               - name
               - price
+              - foodstuffTypeId
         application/json:
           schema:
             type: object
@@ -60,9 +84,12 @@ components:
                 type: string
               price:
                 type: string
+              foodstuffTypeId:
+                type: number
             required:
               - name
               - price
+              - foodstuffTypeId
     AddOrderRequest:
       required: true
       content:
@@ -170,6 +197,26 @@ components:
               - access_token
 
   responses:
+    FoodstuffTypesListResponse:
+      description: "List of foodstuff types"
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/FoodstuffType'
+    AddFoodstuffTypeResponse:
+      description: "Foodstuff type added"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: "ok"
+              foodstuffType:
+                $ref: '#/components/schemas/FoodstuffType'
     FoodstuffsListResponse:
       description: "List of foodstuffs"
       content:
@@ -319,6 +366,13 @@ components:
             example: "pong"
 
   schemas:
+    FoodstuffType:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
     Foodstuff:
       type: object
       properties:
@@ -331,6 +385,8 @@ components:
         description:
           type: string
         price:
+          type: string
+        type:
           type: string
     Order:
       type: object

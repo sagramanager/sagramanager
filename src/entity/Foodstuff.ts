@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
+import { FoodstuffType } from "./FoodstuffType";
 
 @Entity()
 export class Foodstuff {
@@ -17,4 +18,7 @@ export class Foodstuff {
 
     @Column()
     price: string;
+
+    @ManyToOne(() => FoodstuffType, (type) => type)
+    type: FoodstuffType;
 }
