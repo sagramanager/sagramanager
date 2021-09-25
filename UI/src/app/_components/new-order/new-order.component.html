@@ -106,14 +106,37 @@
         <button class="btn" (click)="modal.dismiss()"><span>&times;</span></button>
     </div>
     <div class="modal-body">
-        <div class="mb-3">
-            <label for="name" class="form-label">Nome</label>
-            <input type="text" class="form-control" id="name" [(ngModel)]="newFoodstuff.name" />
-        </div>
-        <div class="d-flex justify-content-end">
-            <button class="btn btn-outline-dark" (click)="saveFoodstuff()">
-                <i class="fas fa-save"></i> Add Foodstuff
-            </button>
-        </div>
+        <form class="form-horizontal" role="form" [formGroup]="newFoodstuffForm">
+            <div class="mb-3">
+                <label for="name" class="form-label">Nome</label>
+                <input type="text" class="form-control" id="name" formControlName="name" />
+            </div>
+            <button class="btn btn-outline-success mt-3 w-100" (click)="addFoodstuffType(foodstuffTypeModal)"><i class="fas fa-plus"></i> Aggiunti tipologia </button>
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-outline-dark" (click)="saveFoodstuff()">
+                    <i class="fas fa-save"></i> Add Foodstuff
+                </button>
+            </div>
+        </form>
+    </div>
+</ng-template>
+
+<ng-template #foodstuffTypeModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Aggiunti tipologia</h4>
+        <button class="btn" (click)="modal.dismiss()"><span>&times;</span></button>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" [formGroup]="newFoodstuffTypeForm">
+            <div class="mb-3">
+                <label for="name" class="form-label">Nome</label>
+                <input type="text" class="form-control" id="name" formControlName="name" />
+            </div>
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-outline-dark" (click)="saveFoodstuffType()" [disabled]="!newFoodstuffTypeForm.valid">
+                    <i class="fas fa-save"></i> Aggiunti tipologia
+                </button>
+            </div>
+        </form>
     </div>
 </ng-template>

@@ -19,10 +19,15 @@ export class NewOrderComponent implements OnInit {
   public foodstuffsListByTypes: any = [];
   public currentOrderByTypes: any = [];
 
-  public newFoodstuff = {
-    name: '',
-    price: ''
-  }
+  newFoodstuffTypeModalRef: any;
+
+  newFoodstuffForm = new FormGroup({
+    name: new FormControl('', Validators.required),
+  });
+
+  newFoodstuffTypeForm = new FormGroup({
+    name: new FormControl('', Validators.required)
+  });
 
   initialInfoForm = new FormGroup({
     customer: new FormControl(''),
@@ -30,10 +35,13 @@ export class NewOrderComponent implements OnInit {
     tableNumber: new FormControl(''),
     waiter: new FormControl(''),
     notes: new FormControl(''),
-    takeAway: new FormControl('')
+    takeAway: new FormControl(false)
   });
 
-  constructor(private modalService: NgbModal, private api: ApiClientService) {
+  constructor(
+    private modalService: NgbModal,
+    private api: ApiClientService
+  ) {
     this.api.get("foodstuffTypes").then((res) => {
       console.log(res);
       this.foodstuffTypes = res;
@@ -146,7 +154,8 @@ export class NewOrderComponent implements OnInit {
         orderObject.foodstuffs.push({
           name: this.currentOrderByTypes[type][foodstuff]["name"],
           price: this.currentOrderByTypes[type][foodstuff]["price"],
-          quantity: this.currentOrderByTypes[type][foodstuff]["quantity"]
+          quantity: this.currentOrderByTypes[type][foodstuff]["quantity"],
+          type: type
         });
       }
     }
@@ -162,13 +171,20 @@ export class NewOrderComponent implements OnInit {
     if(orderObject) {
       this.initialInfoForm.setValue(orderObject.initialInfo);
       for(let foodstuff of orderObject.foodstuffs) {
-        //TODO: add foodstuff to current order
+        let foodstuff_type = foodstuff.type;
+        delete foodstuff.type;
+        if(typeof(this.currentOrderByTypes[foodstuff_type]) === "undefined") {
+          this.currentOrderByTypes[foodstuff_type] = [];
+        }
+        this.currentOrderByTypes[foodstuff_type][foodstuff.name] = foodstuff;
       }
     }
+    this.saveOrderInLocalStorage();
   }
 
   resetOrder() {
     this.currentOrderByTypes = [];
+    this.initialInfoForm.reset();
     localStorage.removeItem('current_order_form_values');
   }
 
@@ -186,7 +202,24 @@ export class NewOrderComponent implements OnInit {
   }
 
   saveFoodstuff() {
-    console.log(this.newFoodstuff);
+    console.log(this.newFoodstuffForm);
+  }
+
+  addFoodstuffType(foodstuffTypeModal: any) {
+    //TODO
+    this.newFoodstuffTypeModalRef = this.modalService.open(foodstuffTypeModal);
+  }
+
+  saveFoodstuffType() {
+    console.log(this.newFoodstuffTypeModalRef, this.newFoodstuffTypeForm, this.newFoodstuffTypeForm.valid);
+    if(this.newFoodstuffTypeForm.valid) {
+      console.log(this.newFoodstuffTypeForm.value);
+      this.api.post("foodstuffTypes", this.newFoodstuffTypeForm.value).then((response: any) => {
+        console.log(response);
+        this.foodstuffTypes.push(response.foodstuffType);
+      });
+      this.newFoodstuffTypeModalRef.close();
+    }
   }
 
 }
