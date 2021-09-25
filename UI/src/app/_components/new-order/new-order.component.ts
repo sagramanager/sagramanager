@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiClientService } from '../../_services/api-client.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+//import iziToast from 'izitoast';
 
 @Component({
   selector: 'app-new-order',
@@ -206,7 +207,6 @@ export class NewOrderComponent implements OnInit {
   }
 
   addFoodstuffType(foodstuffTypeModal: any) {
-    //TODO
     this.newFoodstuffTypeModalRef = this.modalService.open(foodstuffTypeModal);
   }
 
@@ -217,6 +217,19 @@ export class NewOrderComponent implements OnInit {
       this.api.post("foodstuffTypes", this.newFoodstuffTypeForm.value).then((response: any) => {
         console.log(response);
         this.foodstuffTypes.push(response.foodstuffType);
+        /*
+        iziToast.success({
+          title: 'Operazione avvenuta con successo',
+          message: `Tipologia ${response.foodstuffType.name} aggiunta all'elenco.`
+        });
+        */
+      }).catch((error: any) => {
+        /*
+        iziToast.error({
+          title: 'Errore',
+          message: 'Si è verificato un errore non atteso. Riprovare più tardi.',
+        });
+        */
       });
       this.newFoodstuffTypeModalRef.close();
     }
