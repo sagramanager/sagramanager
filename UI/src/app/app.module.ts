@@ -5,6 +5,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+
+import { ModalNewFoodstuffTypeComponent } from './_components/modal-new-foodstuff-type/modal-new-foodstuff-type.component';
+import { ModalNewFoodstuffComponent } from './_components/modal-new-foodstuff/modal-new-foodstuff.component';
+
 import { HomeComponent } from './_components/home/home.component';
 import { OrdersComponent } from './_components/orders/orders.component';
 import { NewOrderComponent } from './_components/new-order/new-order.component';
@@ -17,6 +21,8 @@ import { LoginComponent } from './_components/login/login.component';
 @NgModule({
   declarations: [
     AppComponent,
+    ModalNewFoodstuffTypeComponent,
+    ModalNewFoodstuffComponent,
     HomeComponent,
     OrdersComponent,
     NewOrderComponent,

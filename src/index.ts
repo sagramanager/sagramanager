@@ -3,7 +3,6 @@ import path from 'path';
 import express from 'express';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 import http from 'http';
-import socketio from 'socket.io';
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -13,6 +12,7 @@ import swaggerUi from 'swagger-ui-express';
 
 import { logger } from './_helpers/logger'; 
 import { apiRouter } from './_helpers/apiRouter';
+import { initializeSocketServer } from './_helpers/socketServer';
 import { initializeDB } from './_helpers/db';
 
 //Rate limiter configurations
@@ -36,8 +36,6 @@ const httpServer = new http.Server(app);
 const spec = openapi({
     verbose: false
 });
-
-const io = new socketio.Server(httpServer, { allowEIO3: true });
 
 function initializeServer() {
     app.disable('x-powered-by');
@@ -65,6 +63,7 @@ function initializeServer() {
 
 function startUp() {
 	initializeServer();
+	initializeSocketServer(httpServer);
     initializeDB();
 
 	process.on('uncaughtException', (err: Error) => {

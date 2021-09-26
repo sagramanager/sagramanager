@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiClientService } from '../../_services/api-client.service';
+import { DataLoaderService } from '../../_services/data-loader.service';
+import { ModalNewFoodstuffTypeComponent } from '../modal-new-foodstuff-type/modal-new-foodstuff-type.component';
+import { ModalNewFoodstuffComponent } from '../modal-new-foodstuff/modal-new-foodstuff.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 //import iziToast from 'izitoast';
 
@@ -20,16 +23,6 @@ export class NewOrderComponent implements OnInit {
   public foodstuffsListByTypes: any = [];
   public currentOrderByTypes: any = [];
 
-  newFoodstuffTypeModalRef: any;
-
-  newFoodstuffForm = new FormGroup({
-    name: new FormControl('', Validators.required),
-  });
-
-  newFoodstuffTypeForm = new FormGroup({
-    name: new FormControl('', Validators.required)
-  });
-
   initialInfoForm = new FormGroup({
     customer: new FormControl(''),
     places: new FormControl(''),
@@ -41,7 +34,8 @@ export class NewOrderComponent implements OnInit {
 
   constructor(
     private modalService: NgbModal,
-    private api: ApiClientService
+    private api: ApiClientService,
+    private data: DataLoaderService
   ) {
     this.api.get("foodstuffTypes").then((res) => {
       console.log(res);
@@ -234,43 +228,11 @@ export class NewOrderComponent implements OnInit {
     localStorage.removeItem('current_order_form_values');
   }
 
-  addFoodstuff(foodstuffModal: any) {
-    //TODO
-    this.modalService.open(foodstuffModal);
+  addFoodstuff() {
+    this.modalService.open(ModalNewFoodstuffComponent);
   }
 
-  saveFoodstuff() {
-    console.log(this.newFoodstuffForm);
+  addFoodstuffType() {
+    this.modalService.open(ModalNewFoodstuffTypeComponent);
   }
-
-  addFoodstuffType(foodstuffTypeModal: any) {
-    this.newFoodstuffTypeModalRef = this.modalService.open(foodstuffTypeModal);
-  }
-
-  saveFoodstuffType() {
-    console.log(this.newFoodstuffTypeModalRef, this.newFoodstuffTypeForm, this.newFoodstuffTypeForm.valid);
-    if(this.newFoodstuffTypeForm.valid) {
-      console.log(this.newFoodstuffTypeForm.value);
-      this.api.post("foodstuffTypes", this.newFoodstuffTypeForm.value).then((response: any) => {
-        console.log(response);
-        this.foodstuffTypes.push(response.foodstuffType);
-        /*
-        iziToast.success({
-          title: 'Operazione avvenuta con successo',
-          message: `Tipologia ${response.foodstuffType.name} aggiunta all'elenco.`
-        });
-        */
-      }).catch((error: any) => {
-        console.error(error);
-        /*
-        iziToast.error({
-          title: 'Errore',
-          message: 'Si è verificato un errore non atteso. Riprovare più tardi.',
-        });
-        */
-      });
-      this.newFoodstuffTypeModalRef.close();
-    }
-  }
-
 }
