@@ -25,5 +25,5 @@ export class Order {
     takeAway: boolean;
 
     @Column("simple-json")
-    foodstuff: { foodstuff: number, amount: number, notes: string }[];
+    foodstuff: { id: number, quantity: number, notes: string }[];
 }

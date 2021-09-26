@@ -114,9 +114,9 @@ components:
                 items:
                   type: object
                   properties:
-                    foodstuff:
+                    id:
                       type: number
-                    amount:
+                    quantity:
                       type: number
                     notes:
                       type: string
@@ -410,9 +410,9 @@ components:
           items:
             type: object
             properties:
-              foodstuff:
+              id:
                 type: number
-              amount:
+              quantity:
                 type: number
               notes:
                 type: string

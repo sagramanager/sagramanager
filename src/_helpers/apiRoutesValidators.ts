@@ -22,15 +22,14 @@ export const validateOrderFoodstuffs = () => {
             if (foodstuffs.length && foodstuffs.length > 0) {
                 foodstuffs.forEachAsync(async (foodstuff) => {
                     if (
-                        (!foodstuff.foodstuff || parseInt(foodstuff.foodstuff) === NaN) ||
-                        (!foodstuff.amount || parseInt(foodstuff.amount) === NaN) ||
-                        (!foodstuff.notes || typeof(foodstuff.notes)) !== 'string'
+                        (!foodstuff.id || parseInt(foodstuff.id) === NaN) ||
+                        (!foodstuff.quantity || parseInt(foodstuff.quantity) === NaN)
                     ) {
                         reject('Invalid foodstuff object');
                     }
-                    let foodstuffExists = await checkIfFoodstuffExists(foodstuff.foodstuff);
+                    let foodstuffExists = await checkIfFoodstuffExists(foodstuff.id);
                     if (!foodstuffExists) {
-                        reject(`Foodstuff with id ${foodstuff.foodstuff} does not exist`);
+                        reject(`Foodstuff with id ${foodstuff.id} does not exist`);
                     }
                 }).then(() => {
                     resolve(true);

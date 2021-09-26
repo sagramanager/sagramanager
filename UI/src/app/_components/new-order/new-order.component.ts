@@ -79,7 +79,8 @@ export class NewOrderComponent implements OnInit {
       this.currentOrderByTypes[foodstuff.type.name][foodstuff.name] = {
         name: foodstuff.name,
         price: foodstuff.price,
-        quantity: 1
+        quantity: 1,
+        notes: ""
       }
     } else {
       this.currentOrderByTypes[foodstuff.type.name][foodstuff.name]["quantity"]++;
@@ -144,6 +145,12 @@ export class NewOrderComponent implements OnInit {
     return price;
   }
 
+  getFoodstuffIdByName(foodstuffName: string) {
+    for(let foodstuff of this.foodstuffs) {
+      if(foodstuff.name == foodstuffName) return foodstuff.id;
+    }
+  }
+
   generateOrderObject() {
     let orderObject: any = {
       initialInfo: this.initialInfoForm.value,
@@ -156,7 +163,7 @@ export class NewOrderComponent implements OnInit {
           name: this.currentOrderByTypes[type][foodstuff]["name"],
           price: this.currentOrderByTypes[type][foodstuff]["price"],
           quantity: this.currentOrderByTypes[type][foodstuff]["quantity"],
-          type: type
+          notes: this.currentOrderByTypes[type][foodstuff]["notes"]
         });
       }
     }
@@ -191,8 +198,38 @@ export class NewOrderComponent implements OnInit {
 
   sendOrder() {
     let orderObject = this.generateOrderObject();
+    orderObject.foodstuffs.map((foodstuff: any) => {
+      foodstuff.id = this.getFoodstuffIdByName(foodstuff.name);
+      delete foodstuff.price;
+      delete foodstuff.name;
+      delete foodstuff.type;
+    });
     console.log(orderObject);
-    console.log(this.currentOrderByTypes);
+    this.api.post("orders", {
+      customer: orderObject.initialInfo.customer,
+      places: orderObject.initialInfo.places,
+      tableNumber: orderObject.initialInfo.tableNumber,
+      waiter: orderObject.initialInfo.waiter,
+      notes: orderObject.initialInfo.notes,
+      takeAway: orderObject.initialInfo.takeAway,
+      foodstuffs: orderObject.foodstuffs
+    }).then((response: any) => {
+      console.log(response);
+      /*
+      iziToast.success({
+        title: 'Operazione avvenuta con successo',
+        message: `L'ordine numero ${response.order.id} è stato inviato con successo.`
+      });
+      */
+    }).catch((error: any) => {
+      console.error(error);
+      /*
+      iziToast.error({
+        title: 'Errore',
+        message: 'Si è verificato un errore non atteso. Riprovare più tardi.',
+      });
+      */ 
+    });
 
     localStorage.removeItem('current_order_form_values');
   }
@@ -224,6 +261,7 @@ export class NewOrderComponent implements OnInit {
         });
         */
       }).catch((error: any) => {
+        console.error(error);
         /*
         iziToast.error({
           title: 'Errore',
