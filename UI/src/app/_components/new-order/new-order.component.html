@@ -89,7 +89,7 @@
                     <legend class="buttons_fieldset_label">{{ foodstuffType.name }}:</legend>
                     <button *ngFor="let foodstuff of data.foodstuffsListByTypes[foodstuffType.name]" class="btn btn-primary m-1" (click)="addFoodstuffToOrder(foodstuff)">{{ foodstuff.name }}</button>
                 </fieldset>
-                <button class="btn btn-outline-success mt-3 w-100" (click)="openNewFoodstuffModal()"><i class="fas fa-plus"></i> Add </button>
+                <button class="btn btn-outline-success mt-3 w-100" (click)="openNewFoodstuffModal()"><i class="fas fa-plus"></i> Aggiungi </button>
             </div>
         </div>
     </div>
