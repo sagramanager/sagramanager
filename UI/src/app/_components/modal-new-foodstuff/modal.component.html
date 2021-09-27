@@ -23,7 +23,7 @@
         <div class="mb-3 form-group required">
             <label for="foodstuffType" class="form-label">Tipologia</label>
             <div class="input-group">
-                <select id="foodstuffType" class="form-control" required formControlName="foodstuffType">
+                <select id="foodstuffType" class="form-control" required formControlName="foodstuffTypeId">
                     <option value="" disabled>Selezione la tipologia</option>
                     <option *ngFor="let foodstuffType of data.foodstuffTypes" [ngValue]="foodstuffType.id">{{ foodstuffType.name }}</option>
                 </select>          

@@ -15,7 +15,7 @@ export class ModalNewFoodstuffComponent implements OnInit {
     shortName: new FormControl(''),
     description: new FormControl(''),
     price: new FormControl('', Validators.required),
-    foodstuffType: new FormControl('', Validators.required)
+    foodstuffTypeId: new FormControl('', Validators.required)
   });
 
   constructor(
@@ -28,7 +28,28 @@ export class ModalNewFoodstuffComponent implements OnInit {
   ngOnInit() {}
 
   saveFoodstuff() {
-    console.log(this.newFoodstuffForm);
+    console.log(this.newFoodstuffForm, this.newFoodstuffForm.valid);
+    if(this.newFoodstuffForm.valid) {
+      console.log(this.newFoodstuffForm.value);
+      this.api.post("foodstuffs", this.newFoodstuffForm.value).then((response: any) => {
+        console.log(response);
+        /*
+        iziToast.success({
+          title: 'Operazione avvenuta con successo',
+          message: `Tipologia ${response.foodstuff.name} aggiunta all'elenco.`
+        });
+        */
+      }).catch((error: any) => {
+        console.error(error);
+        /*
+        iziToast.error({
+          title: 'Errore',
+          message: 'Si è verificato un errore non atteso. Riprovare più tardi.',
+        });
+        */
+      });
+      this.activeModal.close();
+    }
   }
 
   addFoodstuffType() {

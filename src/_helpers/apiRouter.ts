@@ -85,7 +85,7 @@ apiRouter.use(express.urlencoded({ extended: false }));
  * @tag foodstuff
  */
  apiRouter.post('/foodstuffs', requireRole(),
-    body('name').isLength({ min: 5 }),
+    body('name').isLength({ min: 1 }),
     //body('price').isLength({ min: 5 }), TODO: add custom price validator
  function(req, res) {
     const errors = validationResult(req);
