@@ -8,6 +8,7 @@ import { Order } from '../entity/Order';
 import { Foodstuff } from '../entity/Foodstuff';
 import { FoodstuffType } from '../entity/FoodstuffType';
 import { addUser, authenticate, validateAccessToken, requireRole } from '../_helpers/auth';
+import { io } from '../_helpers/socketServer';
 import { validateOrderFoodstuffs } from './apiRoutesValidators';
 import { AddUserSettings } from '../_models/AddUserSettings';
 
@@ -52,6 +53,7 @@ apiRouter.use(express.urlencoded({ extended: false }));
     foodstuffType.name = req.body.name;
 
     connection.getRepository(FoodstuffType).save(foodstuffType).then((foodstuffType: FoodstuffType) => {
+        io.emit('newFoodstuffType', foodstuffType);
         res.json({
             status: "ok",
             foodstuffType: foodstuffType
@@ -102,6 +104,7 @@ apiRouter.use(express.urlencoded({ extended: false }));
         foodstuff.type = foodstuffType;
 
         connection.getRepository(Foodstuff).save(foodstuff).then((foodstuff: Foodstuff) => {
+            io.emit('newFoodstuff', foodstuff);
             res.json({
                 status: "ok",
                 foodstuff: foodstuff
@@ -153,6 +156,7 @@ apiRouter.use(express.urlencoded({ extended: false }));
     order.foodstuff = req.body.foodstuffs;
 
     connection.getRepository(Order).save(order).then((order: Order) => {
+        io.emit('newOrder', order);
         res.json({
             status: "ok",
             order: order
@@ -204,6 +208,7 @@ function(req, res) {
     
     addUser(user_settings).then((user) => {
         delete user["password"];
+        io.emit('newUser', user);
         res.json({
             status: "ok",
             user: user

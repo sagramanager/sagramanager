@@ -2,8 +2,10 @@ import socketio from 'socket.io';
 import { logger } from './logger';
 import { validateAccessToken } from './auth';
 
+export var io = undefined;
+
 export function initializeSocketServer(httpServer: any) {
-    const io = new socketio.Server(httpServer);
+    io = new socketio.Server(httpServer);
     
     io.use((socket, next) => {
         const token = socket.handshake.auth.token;

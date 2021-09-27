@@ -37,6 +37,19 @@ export class DataLoaderService {
             console.error("Websocket connection error", err);
         });
 
+        this.io.on("newFoodstuffType", (data: any) => {
+            console.log("newFoodstuffType", data);
+            this.foodstuffTypes.push(data);
+        });
+        this.io.on("newFoodstuff", (data: any) => {
+            console.log("newFoodstuff", data);
+            this.foodstuffs.push(data);
+            if(typeof(this.foodstuffsListByTypes[data.type.name]) === "undefined") {
+                this.foodstuffsListByTypes[data.type.name] = [];
+            }
+            this.foodstuffsListByTypes[data.type.name].push(data);
+        });
+
         this.api.get("foodstuffTypes").then((res) => {
             console.log(res);
             this.foodstuffTypes = res;
