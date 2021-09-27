@@ -13,14 +13,6 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
   styleUrls: ['./new-order.component.css']
 })
 export class NewOrderComponent implements OnInit {
-
-  public foodstuffTypes: any = [];
-  public foodstuffTypesLoaded = false;
-
-  public foodstuffs: any = [];
-  public foodstuffsLoaded = false;
-
-  public foodstuffsListByTypes: any = [];
   public currentOrderByTypes: any = [];
 
   initialInfoForm = new FormGroup({
@@ -35,25 +27,9 @@ export class NewOrderComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private api: ApiClientService,
-    private data: DataLoaderService
+    public data: DataLoaderService
   ) {
-    this.api.get("foodstuffTypes").then((res) => {
-      console.log(res);
-      this.foodstuffTypes = res;
-      this.foodstuffTypesLoaded = true;
-    });
-    this.api.get("foodstuffs").then((res) => {
-      console.log(res);
-      res.forEach((foodstuff: any) => {
-        if(typeof(this.foodstuffsListByTypes[foodstuff.type.name]) === "undefined") {
-          this.foodstuffsListByTypes[foodstuff.type.name] = [];
-        }
-        this.foodstuffsListByTypes[foodstuff.type.name].push(foodstuff);
-      });
-      console.log(this.foodstuffsListByTypes);
-      this.foodstuffs = res;
-      this.foodstuffsLoaded = true;
-
+    this.data.foodstuffTypesLoad.subscribe(() => {
       this.loadOrderFromLocalStorage();
     });
     this.initialInfoForm.valueChanges.subscribe((val) => {
@@ -139,12 +115,6 @@ export class NewOrderComponent implements OnInit {
     return price;
   }
 
-  getFoodstuffIdByName(foodstuffName: string) {
-    for(let foodstuff of this.foodstuffs) {
-      if(foodstuff.name == foodstuffName) return foodstuff.id;
-    }
-  }
-
   generateOrderObject() {
     let orderObject: any = {
       initialInfo: this.initialInfoForm.value,
@@ -193,7 +163,7 @@ export class NewOrderComponent implements OnInit {
   sendOrder() {
     let orderObject = this.generateOrderObject();
     orderObject.foodstuffs.map((foodstuff: any) => {
-      foodstuff.id = this.getFoodstuffIdByName(foodstuff.name);
+      foodstuff.id = this.data.getFoodstuffIdByName(foodstuff.name);
       delete foodstuff.price;
       delete foodstuff.name;
       delete foodstuff.type;
@@ -228,11 +198,11 @@ export class NewOrderComponent implements OnInit {
     localStorage.removeItem('current_order_form_values');
   }
 
-  addFoodstuff() {
+  openNewFoodstuffModal() {
     this.modalService.open(ModalNewFoodstuffComponent);
   }
 
-  addFoodstuffType() {
+  openNewFoodstuffTypeModal() {
     this.modalService.open(ModalNewFoodstuffTypeComponent);
   }
 }

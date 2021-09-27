@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiClientService } from './api-client.service';
+import { DataLoaderService } from './data-loader.service';
 import jwt_decode from 'jwt-decode';
 
 export interface LoginResponse {
@@ -30,10 +31,10 @@ export class AuthService {
         return true;
     }
 
-    constructor(private api: ApiClientService) {
+    constructor(private api: ApiClientService, private data: DataLoaderService) {
         if(localStorage.getItem("access_token") !== null) {
             this.access_token = localStorage.getItem("access_token") as string;
-            this.api.setToken(this.access_token);
+            this.data.initialize(this.access_token);
             this.loadProfile();
         }
     }
