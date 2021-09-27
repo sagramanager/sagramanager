@@ -25,10 +25,10 @@ export function initializeSocketServer(httpServer: any) {
     });
 
     io.on('connection', (socket: any) => {
-        console.log(`New client connected (id=${socket.id} ip=${socket.handshake.address})`);
+        logger(`New client connected (id=${socket.id} ip=${socket.handshake.address})`, "debug");
     
         socket.on('disconnect', () => {
-            console.log(`Client disconnected (id=${socket.id} ip=${socket.handshake.address})`);
+            logger(`Client disconnected (id=${socket.id} ip=${socket.handshake.address})`, "debug");
         });
     });
 
