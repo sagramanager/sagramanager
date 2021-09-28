@@ -6,7 +6,6 @@ import { RateLimiterMemory } from 'rate-limiter-flexible';
 import http from 'http';
 
 import { generateInitialConfig } from './_helpers/generateInitialConfig';
-console.log(path.join(__dirname, '..', '.env'));
 if (fs.existsSync(path.join(__dirname, '..', '.env'))) {
 	dotenv.config();
 } else {

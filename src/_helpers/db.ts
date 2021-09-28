@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { createConnection } from "typeorm";
 import { logger } from "./logger";
+import { checkIfUsersTableEmptyAndUpdate } from "./auth";
 import path from "path";
 
 export var connection = undefined;
@@ -15,8 +16,9 @@ export function initializeDB(){
         synchronize: true,
         logging: false
     }).then((new_connection) => {
-        logger('Initialized db connection', 'verbose');
         connection = new_connection;
+        logger('Initialized db connection', 'verbose');
+        checkIfUsersTableEmptyAndUpdate();
     }).catch(error => {
         throw error;
     });

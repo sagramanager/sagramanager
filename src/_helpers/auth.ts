@@ -6,6 +6,8 @@ import { AddUserSettings } from '../_models/AddUserSettings';
 import { AuthenticateSuccessResponse } from '../_models/AuthenticateSuccessResponse';
 import { logger } from "./logger";
 
+export var isUsersTableEmpty: boolean = true;
+
 export function hashPassword(password: string): string {
     return bcrypt.hashSync(password, 10);
 }
@@ -33,10 +35,30 @@ export function addUser(settings: AddUserSettings): Promise<User> {
         try {
             connection.getRepository(User).save(user).then((user: User) => {
                 logger(`User '${user.username}' was added`, 'info');
+                isUsersTableEmpty = false;
                 resolve(user);
             });
         } catch(e) {
             reject(e);
+        }
+    });
+}
+
+export function checkIfUsersTableEmpty(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+        connection.getRepository(User).count().then((count) => {
+            resolve(count === 0);
+        }).catch((err) => {
+            resolve(true);
+        });
+    });
+}
+
+export function checkIfUsersTableEmptyAndUpdate() {
+    checkIfUsersTableEmpty().then((result) => {
+        isUsersTableEmpty = result;
+        if(result) {
+            logger("Users table is empty; requesting user info at first UI start.", "info");
         }
     });
 }
@@ -77,6 +99,7 @@ export function validateAccessToken(access_token: string): Promise<User> {
 
 export const requireRole = (role?: string) => {
     return (req, res, next) => {
+        if(isUsersTableEmpty) next();
         let token = undefined;
         if (req.headers && req.headers.authorization) {
             var parts = req.headers.authorization.split(' ');
