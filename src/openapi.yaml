@@ -277,6 +277,12 @@ components:
                 example: "ok"
               user:
                 $ref: '#/components/schemas/User'
+    UsersEmptyResponse:
+      description: "Is users list empty"
+      content:
+        application/json:
+          schema:
+            type: boolean
     ProfileResponse:
       description: "User profile"
       content:

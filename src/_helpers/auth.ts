@@ -99,7 +99,9 @@ export function validateAccessToken(access_token: string): Promise<User> {
 
 export const requireRole = (role?: string) => {
     return (req, res, next) => {
-        if(isUsersTableEmpty) next();
+        if(isUsersTableEmpty){
+            return next();
+        }
         let token = undefined;
         if (req.headers && req.headers.authorization) {
             var parts = req.headers.authorization.split(' ');

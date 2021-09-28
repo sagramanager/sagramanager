@@ -7,7 +7,7 @@ import { User } from '../entity/User';
 import { Order } from '../entity/Order';
 import { Foodstuff } from '../entity/Foodstuff';
 import { FoodstuffType } from '../entity/FoodstuffType';
-import { addUser, authenticate, validateAccessToken, requireRole } from '../_helpers/auth';
+import { addUser, authenticate, validateAccessToken, requireRole, isUsersTableEmpty } from '../_helpers/auth';
 import { io } from '../_helpers/socketServer';
 import { validateOrderFoodstuffs } from './apiRoutesValidators';
 import { AddUserSettings } from '../_models/AddUserSettings';
@@ -214,6 +214,16 @@ function(req, res) {
             user: user
         });
     });
+});
+
+/**
+ * GET /usersEmpty
+ * @description Get if users list is empty.
+ * @responseComponent {UsersEmptyResponse} 200
+ * @tag users
+ */
+ apiRouter.get('/usersEmpty', function(req: any, res) {
+    res.send(isUsersTableEmpty);
 });
 
 /**

@@ -42,7 +42,7 @@ export class AuthService {
     private setToken(value: string) {
         localStorage.setItem("access_token", value);
         this.access_token = value;
-        this.api.setToken(value);
+        this.data.initialize(this.access_token);
         this.loadProfile();
     }
 
@@ -54,6 +54,10 @@ export class AuthService {
         return this.profile !== undefined;
     }
 
+    public checkIfUsersListEmpty() {
+        return this.api.get("usersEmpty");
+    }
+
     public login(username: string, password: string) {
         return new Promise<LoginResponse>((resolve) => {
             this.api.post("login", {
@@ -62,9 +66,40 @@ export class AuthService {
             }).then((data: any) => {
                 console.log(data);
                 this.setToken(data.access_token);
+                console.log("Access token", data);
                 resolve({
                     loginOk: true,
                     message: data.message
+                });
+            }).catch((err) => {
+                let error_message = "";
+                if(err.status == 401) {
+                    error_message = err.error.message;
+                } else if (err.status = 400) {
+                    let error_messages = err.error.errors;
+                    error_message = error_messages.map((val: any) => {
+                        return `${val.msg} in ${val.param}`;
+                    }).join(" & ");
+                }
+                resolve({
+                    loginOk: false,
+                    message: error_message
+                });
+            });
+        })
+    }
+
+    public register(username: string, name: string | undefined, password: string) {
+        return new Promise<LoginResponse>((resolve) => {
+            console.log("register request");
+            this.api.post("users", {
+                username: username,
+                name: name,
+                password: password
+            }).then((data: any) => {
+                console.log(data);
+                this.login(username, password).then((loginData: LoginResponse) => {
+                    resolve(loginData);
                 });
             }).catch((err) => {
                 let error_message = "";

@@ -9,8 +9,11 @@ import { AuthService, LoginResponse } from 'src/app/_services/auth.service';
 })
 export class LoginComponent {
   public loading = false;
+  public newUserRegistrationRequired = false;
+
   public loginResponse: LoginResponse = {loginOk: false, message: ''};
   public username = "";
+  public name = "";
   public password = "";
   private redirectParamsList: string[] = [];
   private redirectParam = "";
@@ -40,11 +43,35 @@ export class LoginComponent {
     if(this.authService.isAuthenticated()) {
       this.router.navigate(this.redirectParamsList);
     }
+    this.authService.checkIfUsersListEmpty().then((response: boolean) => {
+      console.log("usersListEmpty", response);
+      this.newUserRegistrationRequired = response;
+    });
   }
   
+  loginOrRegister(): void {
+    if(this.newUserRegistrationRequired) {
+      this.register();
+    } else {
+      this.login();
+    }
+  }
+
   login(): void {
     this.loading = true;
     this.authService.login(this.username, this.password).then((response: LoginResponse) => {
+      this.loginResponse = response;
+      this.loading = false;
+      console.log(response);
+      if (response.loginOk === true) {
+        this.router.navigate(this.redirectParamsList);
+      }
+    });
+  }
+
+  register(): void {
+    this.loading = true;
+    this.authService.register(this.username, this.name, this.password).then((response: LoginResponse) => {
       this.loginResponse = response;
       this.loading = false;
       console.log(response);
