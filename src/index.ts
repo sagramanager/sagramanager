@@ -1,11 +1,17 @@
 import fs from 'fs-extra';
 import path from 'path';
+import dotenv from 'dotenv';
 import express from 'express';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 import http from 'http';
 
-import dotenv from 'dotenv';
-dotenv.config();
+import { generateInitialConfig } from './_helpers/generateInitialConfig';
+console.log(path.join(__dirname, '..', '.env'));
+if (fs.existsSync(path.join(__dirname, '..', '.env'))) {
+	dotenv.config();
+} else {
+	generateInitialConfig();
+}
 
 import openapi from 'openapi-comment-parser';
 import swaggerUi from 'swagger-ui-express';
