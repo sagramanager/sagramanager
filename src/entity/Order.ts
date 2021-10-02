@@ -18,7 +18,7 @@ export class Order {
     @Column({ type: 'text', nullable: true })
     waiter!: string;
 
-    @Column({ type: 'text', default: '' })
+    @Column({ type: 'text', nullable: true })
     notes: string;
 
     @Column({ type: 'boolean', default: false })

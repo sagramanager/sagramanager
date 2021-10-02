@@ -15,6 +15,9 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 export class NewOrderComponent implements OnInit {
   public currentOrderByTypes: any = [];
 
+  public currentOrderPaidByTypes: any = [];
+  public currentOrderPaid = 0;
+
   initialInfoForm = new FormGroup({
     customer: new FormControl(''),
     places: new FormControl(''),
@@ -23,6 +26,8 @@ export class NewOrderComponent implements OnInit {
     notes: new FormControl(''),
     takeAway: new FormControl(false)
   });
+
+  money_types_list = ["10_cents", "20_cents", "50_cents", "1_euros", "2_euros", "5_euros", "10_euros", "50_euros"];
 
   constructor(
     private modalService: NgbModal,
@@ -34,6 +39,9 @@ export class NewOrderComponent implements OnInit {
     });
     this.initialInfoForm.valueChanges.subscribe((val) => {
       this.saveOrderInLocalStorage();
+    });
+    this.money_types_list.forEach((money_type) => {
+      this.currentOrderPaidByTypes[money_type] = 0;
     });
   }
 
@@ -105,6 +113,30 @@ export class NewOrderComponent implements OnInit {
     this.saveOrderInLocalStorage();
   }
 
+  getMoneyValueByType(money_type: string) {
+    if(money_type.indexOf("euros") > -1) {
+      return parseFloat(money_type.replace("euros", ""));
+    }
+    if(money_type.indexOf("cents") > -1) {
+      return parseFloat("0."+money_type.replace("cents", ""));
+    }
+    return 0;
+  }
+
+  sumCurrentOrderPaid(money_type: string) {
+    this.currentOrderPaidByTypes[money_type]++;
+    this.currentOrderPaid += this.getMoneyValueByType(money_type);
+    this.saveOrderInLocalStorage();
+  }
+
+  subtractCurrentOrderPaid(money_type: string) {
+    if(this.currentOrderPaidByTypes[money_type] > 0) {
+      this.currentOrderPaidByTypes[money_type]--;
+      this.currentOrderPaid -= this.getMoneyValueByType(money_type);
+    }
+    this.saveOrderInLocalStorage();
+  }
+
   getTotalPriceOfCurrentOrder() {
     let price = 0;
     for(let type in this.currentOrderByTypes) {
@@ -155,6 +187,10 @@ export class NewOrderComponent implements OnInit {
   }
 
   resetOrder() {
+    this.money_types_list.forEach((money_type) => {
+      this.currentOrderPaidByTypes[money_type] = 0;
+    });
+    this.currentOrderPaid = 0;
     this.currentOrderByTypes = [];
     this.initialInfoForm.reset();
     localStorage.removeItem('current_order_form_values');
@@ -169,6 +205,7 @@ export class NewOrderComponent implements OnInit {
       delete foodstuff.type;
     });
     console.log(orderObject);
+    this.resetOrder();
     this.api.post("orders", {
       customer: orderObject.initialInfo.customer,
       places: orderObject.initialInfo.places,

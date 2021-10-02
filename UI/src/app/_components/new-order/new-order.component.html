@@ -1,5 +1,5 @@
 <div class="container">
-    <form class="form-horizontal" role="form" [formGroup]="initialInfoForm">
+    <form hidden class="form-horizontal" role="form" [formGroup]="initialInfoForm">
         <div class="form-group">
             <div>
                 <div class="form-group row mt-2">
@@ -94,7 +94,18 @@
         </div>
     </div>
     <div *ngIf="foodstuffTypeInCurrentOrderList().length > 0">
-        <p>Prezzo totale: <b>{{ getTotalPriceOfCurrentOrder() }} €</b></p>
+        <p>Prezzo totale: <b>{{ getTotalPriceOfCurrentOrder() | number: '1.2-3' }} €</b></p>
+        <p>Pagato: <b>{{ currentOrderPaid | number: '1.2-3' }} €</b></p>
+        <p>Resto: <b>{{ currentOrderPaid - getTotalPriceOfCurrentOrder() | number: '1.2-3' }} €</b></p>
+    </div>
+    <div class="d-flex mt-4">
+        <div class="d-inline-block text-center" *ngFor="let type of money_types_list">
+            <img class="img-fluid" src="assets/money/{{ type }}.png" alt="" (click)="sumCurrentOrderPaid(type)">
+            <i class="fas fa-plus m-1" (click)="sumCurrentOrderPaid(type)"></i>
+            <i class="fas fa-minus m-1" (click)="subtractCurrentOrderPaid(type)"></i>
+            <p>{{ currentOrderPaidByTypes[type] }}</p>
+            <p>{{ type.replace("_euros","€").replace("_cents"," cent.") }}</p>
+        </div>
     </div>
     <div class="btn-group mb-5 mt-3" role="group" aria-label="Azioni ordine">
         <button type="button" class="btn btn-primary" (click)="sendOrder()"><i class="fa fa-paper-plane"></i> Invia ordine</button>
