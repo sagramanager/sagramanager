@@ -6,7 +6,7 @@
     <form class="form-horizontal" role="form" [formGroup]="newFoodstuffTypeForm">
         <div class="mb-3 form-group required">
             <label for="name" class="form-label form-label-required">Nome</label>
-            <input type="text" class="form-control" id="name" required formControlName="name" />
+            <input type="text" class="form-control" id="name" ngbAutofocus required formControlName="name" />
         </div>
         <div class="d-flex justify-content-end">
             <button class="btn btn-outline-dark" (click)="saveFoodstuffType()" [disabled]="!newFoodstuffTypeForm.valid">
