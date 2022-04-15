@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ApiClientService } from './api-client.service';
 import io from 'socket.io-client';
-import { AsyncSubject } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,11 +10,11 @@ export class DataLoaderService {
     io: any = undefined;
 
     public foodstuffTypes: any = [];
-    public foodstuffTypesLoad = new AsyncSubject();
+    public foodstuffTypesLoad = new Subject();
     public foodstuffTypesLoaded = false;
 
     public foodstuffs: any = [];
-    public foodstuffsLoad = new AsyncSubject();
+    public foodstuffsLoad = new Subject();
     public foodstuffsLoaded = false;
 
     public foodstuffsListByTypes: any = [];
@@ -49,11 +49,13 @@ export class DataLoaderService {
             }
             this.foodstuffsListByTypes[data.type.name].push(data);
         });
+    }
 
+    loadFoodstuffData() {
         this.api.get("foodstuffTypes").then((res) => {
             console.log(res);
             this.foodstuffTypes = res;
-            this.foodstuffTypesLoad.complete();
+            this.foodstuffTypesLoad.next();
             this.foodstuffTypesLoaded = true;
         });
         this.api.get("foodstuffs").then((res) => {
@@ -66,7 +68,7 @@ export class DataLoaderService {
             });
             console.log(this.foodstuffsListByTypes);
             this.foodstuffs = res;
-            this.foodstuffsLoad.complete();
+            this.foodstuffsLoad.next();
             this.foodstuffsLoaded = true;
         });
     }
@@ -75,5 +77,9 @@ export class DataLoaderService {
         for(let foodstuff of this.foodstuffs) {
           if(foodstuff.name == foodstuffName) return foodstuff.id;
         }
+    }
+
+    getFoodstuffsByType(foodstuffType: string) {
+        return this.foodstuffsListByTypes[foodstuffType];
     }
 }

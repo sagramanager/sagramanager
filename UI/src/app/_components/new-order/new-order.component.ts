@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiClientService } from '../../_services/api-client.service';
 import { DataLoaderService } from '../../_services/data-loader.service';
@@ -18,6 +18,8 @@ export class NewOrderComponent implements OnInit {
   public currentOrderPaidByTypes: any = [];
   public currentOrderPaid = 0;
 
+  hideButtonsCol = window.innerWidth < 1080;
+
   initialInfoForm = new FormGroup({
     customer: new FormControl(''),
     places: new FormControl(''),
@@ -34,8 +36,14 @@ export class NewOrderComponent implements OnInit {
     private api: ApiClientService,
     public data: DataLoaderService
   ) {
-    this.data.foodstuffTypesLoad.subscribe(() => {
+    this.data.foodstuffsLoad.subscribe(() => {
       this.loadOrderFromLocalStorage();
+      
+      this.data.foodstuffTypes.map((t: any) => t.name).forEach((type: string) => {
+        this.data.getFoodstuffsByType(type).forEach((foodstuff: any) => {
+          this.addFoodstuffToOrder(foodstuff, 0);
+        });
+      });
     });
     this.initialInfoForm.valueChanges.subscribe((val) => {
       this.saveOrderInLocalStorage();
@@ -43,12 +51,18 @@ export class NewOrderComponent implements OnInit {
     this.money_types_list.forEach((money_type) => {
       this.currentOrderPaidByTypes[money_type] = 0;
     });
+    this.data.loadFoodstuffData();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event) {
+    this.hideButtonsCol = window.innerWidth < 1080;
   }
 
   ngOnInit(): void {
   }
 
-  addFoodstuffToOrder(foodstuff: any) {
+  addFoodstuffToOrder(foodstuff: any, quantity: number = 1) {
     console.log("Add", foodstuff);
     if(typeof(this.currentOrderByTypes[foodstuff.type.name]) === "undefined") {
       this.currentOrderByTypes[foodstuff.type.name] = [];
@@ -57,11 +71,11 @@ export class NewOrderComponent implements OnInit {
       this.currentOrderByTypes[foodstuff.type.name][foodstuff.name] = {
         name: foodstuff.name,
         price: foodstuff.price,
-        quantity: 1,
+        quantity: quantity,
         notes: ""
       }
     } else {
-      this.currentOrderByTypes[foodstuff.type.name][foodstuff.name]["quantity"]++;
+      this.currentOrderByTypes[foodstuff.type.name][foodstuff.name]["quantity"] += quantity;
     }
     this.saveOrderInLocalStorage();
     
@@ -81,6 +95,8 @@ export class NewOrderComponent implements OnInit {
     //return true if type is in current order
     if(typeof(this.currentOrderByTypes[type]) === "undefined") {
       return false;
+    } else if(!this.hideButtonsCol) {
+      return Object.values(this.currentOrderByTypes[type]).some((foodstuff: any) => foodstuff.quantity > 0);
     }
     return true;
   }
@@ -148,21 +164,32 @@ export class NewOrderComponent implements OnInit {
   }
 
   generateOrderObject() {
+    let initialInfo = this.initialInfoForm.value;
+    if(initialInfo.customer == null) initialInfo.customer = "";
+    if(initialInfo.places == null) initialInfo.places = "";
+    if(initialInfo.tableNumber == null) initialInfo.tableNumber = "";
+    if(initialInfo.waiter == null) initialInfo.waiter = "";
+    if(initialInfo.notes == null) initialInfo.notes = "";
+    if(initialInfo.takeAway == null) initialInfo.takeAway = false;
+
     let orderObject: any = {
-      initialInfo: this.initialInfoForm.value,
+      initialInfo: initialInfo,
       foodstuffs: []
     };
-    console.log(this.initialInfoForm.value);
+
     for(let type in this.currentOrderByTypes) {
       for(let foodstuff in this.currentOrderByTypes[type]) {
+        if(this.currentOrderByTypes[type][foodstuff]["quantity"] == 0) break;
         orderObject.foodstuffs.push({
           name: this.currentOrderByTypes[type][foodstuff]["name"],
           price: this.currentOrderByTypes[type][foodstuff]["price"],
           quantity: this.currentOrderByTypes[type][foodstuff]["quantity"],
-          notes: this.currentOrderByTypes[type][foodstuff]["notes"]
+          notes: this.currentOrderByTypes[type][foodstuff]["notes"],
+          type: type
         });
       }
     }
+
     return orderObject;
   }
 

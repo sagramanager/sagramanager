@@ -59,17 +59,19 @@
                                                 </tr>
                                             </thead>
                                             <tbody class="align-middle">
-                                                <tr *ngFor="let foodstuff of getFoodstuffsInCurrentOrderByType(foodstuffType.name)" style="font-size: x-large;">
-                                                    <td>{{ foodstuff.name }}</td>
-                                                    <td>{{ foodstuff.quantity }}
-                                                        <div class="btn-group" role="group">
-                                                            <button class="btn btn-success" (click)="sumFoodstuffQuantity(foodstuffType.name, foodstuff.name)"><i class="fas fa-plus"></i></button>
-                                                            <button class="btn btn-danger" (click)="subtractFoodstuffQuantity(foodstuffType.name, foodstuff.name)"><i class="fas fa-minus"></i></button>
-                                                        </div>
-                                                    </td>
-                                                    <td>{{ foodstuff.price }} €</td>
-                                                    <td>{{ foodstuff.price * foodstuff.quantity }} €</td>
-                                                </tr>
+                                                <ng-container *ngFor="let foodstuff of getFoodstuffsInCurrentOrderByType(foodstuffType.name)">
+                                                    <tr *ngIf="hideButtonsCol || foodstuff.quantity > 0" style="font-size: x-large;">
+                                                        <td>{{ foodstuff.name }}</td>
+                                                        <td>{{ foodstuff.quantity }}
+                                                            <div class="btn-group" role="group">
+                                                                <button class="btn btn-success" (click)="sumFoodstuffQuantity(foodstuffType.name, foodstuff.name)"><i class="fas fa-plus"></i></button>
+                                                                <button class="btn btn-danger" (click)="subtractFoodstuffQuantity(foodstuffType.name, foodstuff.name)"><i class="fas fa-minus"></i></button>
+                                                            </div>
+                                                        </td>
+                                                        <td>{{ foodstuff.price }} €</td>
+                                                        <td>{{ foodstuff.price * foodstuff.quantity }} €</td>
+                                                    </tr>
+                                                </ng-container>
                                             </tbody>
                                         </table>
                                     </td>
@@ -80,7 +82,7 @@
                 </table>
             </div>
         </div>
-        <div class="col-4 buttons_col">
+        <div class="col-4 buttons_col" [hidden]="hideButtonsCol">
             <div *ngIf="!data.foodstuffTypesLoaded" class="d-flex justify-content-center mt-5 pt-5">
                 <div class="spinner spinner-border text-dark"></div>
             </div>
