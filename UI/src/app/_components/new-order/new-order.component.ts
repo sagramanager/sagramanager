@@ -2,6 +2,7 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiClientService } from '../../_services/api-client.service';
 import { DataLoaderService } from '../../_services/data-loader.service';
+import { ModalNewWaiterComponent } from '../modal-new-waiter/modal-new-waiter.component';
 import { ModalNewFoodstuffTypeComponent } from '../modal-new-foodstuff-type/modal-new-foodstuff-type.component';
 import { ModalNewFoodstuffComponent } from '../modal-new-foodstuff/modal-new-foodstuff.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -52,6 +53,7 @@ export class NewOrderComponent implements OnInit {
       this.currentOrderPaidByTypes[money_type] = 0;
     });
     this.data.loadFoodstuffData();
+    this.data.loadWaiters();
   }
 
   @HostListener('window:resize', ['$event'])
@@ -179,12 +181,13 @@ export class NewOrderComponent implements OnInit {
 
     for(let type in this.currentOrderByTypes) {
       for(let foodstuff in this.currentOrderByTypes[type]) {
-        if(this.currentOrderByTypes[type][foodstuff]["quantity"] == 0) break;
+        let currentFoodstuff = this.currentOrderByTypes[type][foodstuff];
+        if(currentFoodstuff["quantity"] == 0) break;
         orderObject.foodstuffs.push({
-          name: this.currentOrderByTypes[type][foodstuff]["name"],
-          price: this.currentOrderByTypes[type][foodstuff]["price"],
-          quantity: this.currentOrderByTypes[type][foodstuff]["quantity"],
-          notes: this.currentOrderByTypes[type][foodstuff]["notes"],
+          name: currentFoodstuff["name"],
+          price: currentFoodstuff["price"],
+          quantity: currentFoodstuff["quantity"],
+          notes: currentFoodstuff["notes"],
           type: type
         });
       }
@@ -260,6 +263,10 @@ export class NewOrderComponent implements OnInit {
     });
 
     localStorage.removeItem('current_order_form_values');
+  }
+
+  openNewWaiterModal() {
+    this.modalService.open(ModalNewWaiterComponent);
   }
 
   openNewFoodstuffModal() {

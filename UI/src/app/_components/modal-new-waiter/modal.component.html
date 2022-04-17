@@ -1,0 +1,17 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Aggiungi cameriere</h4>
+  <button class="btn" (click)="activeModal.close()"><span>&times;</span></button>
+</div>
+<div class="modal-body">
+  <form class="form-horizontal" role="form" [formGroup]="newWaiterForm">
+      <div class="mb-3 form-group required">
+          <label for="name" class="form-label form-label-required">Nome</label>
+          <input type="text" class="form-control" id="name" ngbAutofocus required formControlName="name" />
+      </div>
+      <div class="d-flex justify-content-end">
+          <button class="btn btn-outline-dark" (click)="saveWaiter()" [disabled]="!newWaiterForm.valid">
+              <i class="fas fa-save"></i> Aggiungi cameriere
+          </button>
+      </div>
+  </form>
+</div>

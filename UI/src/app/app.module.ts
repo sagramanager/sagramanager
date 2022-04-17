@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
+import { ModalNewWaiterComponent } from './_components/modal-new-waiter/modal-new-waiter.component';
 import { ModalNewFoodstuffTypeComponent } from './_components/modal-new-foodstuff-type/modal-new-foodstuff-type.component';
 import { ModalNewFoodstuffComponent } from './_components/modal-new-foodstuff/modal-new-foodstuff.component';
 
@@ -21,6 +22,7 @@ import { LoginComponent } from './_components/login/login.component';
 @NgModule({
   declarations: [
     AppComponent,
+    ModalNewWaiterComponent,
     ModalNewFoodstuffTypeComponent,
     ModalNewFoodstuffComponent,
     HomeComponent,

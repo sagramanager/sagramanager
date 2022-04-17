@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
+import { Waiter } from "./Waiter";
 
 @Entity()
 export class Order {
@@ -15,8 +16,8 @@ export class Order {
     @Column({ type: 'text', nullable: true })
     tableNumber!: string | number;
 
-    @Column({ type: 'text', nullable: true })
-    waiter!: string;
+    @ManyToOne(() => Waiter, (waiter) => waiter.orders, { nullable: true })
+    waiter!: Waiter;
 
     @Column({ type: 'text', nullable: true })
     notes: string;

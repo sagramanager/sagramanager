@@ -7,6 +7,7 @@ import { User } from '../entity/User';
 import { Order } from '../entity/Order';
 import { Foodstuff } from '../entity/Foodstuff';
 import { FoodstuffType } from '../entity/FoodstuffType';
+import { Waiter } from '../entity/Waiter';
 import { addUser, authenticate, validateAccessToken, requireRole, isUsersTableEmpty } from '../_helpers/auth';
 import { io } from '../_helpers/socketServer';
 import { validateOrderFoodstuffs } from './apiRoutesValidators';
@@ -114,6 +115,50 @@ apiRouter.use(express.urlencoded({ extended: false }));
 });
 
 /**
+ * GET /waiters
+ * @description Get waiters list.
+ * @responseComponent {AuthError} 401
+ * @responseComponent {WaitersListResponse} 200
+ * @security bearerAuth
+ * @tag waiters
+ */
+ apiRouter.get('/waiters', requireRole(), function(req, res) {
+    let waiterRepository = connection.getRepository(Waiter);
+    waiterRepository.find().then((waiters: Waiter[]) => {
+        res.json(waiters);
+    });
+});
+
+/**
+ * POST /waiters
+ * @description Add new waiter.
+ * @responseComponent {ValidationError} 400
+ * @responseComponent {AuthError} 401
+ * @responseComponent {AddWaiterResponse} 200
+ * @bodyComponent {AddWaiterRequest}
+ * @security bearerAuth
+ * @tag waiters
+ */
+ apiRouter.post('/waiters', requireRole(),
+    body('name').isLength({ min: 1 }),
+ function(req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    let waiter = new Waiter();
+    waiter.name = req.body.name;
+    connection.getRepository(Waiter).save(waiter).then((waiter: Waiter) => {
+        io.emit('newWaiter', waiter);
+        res.json({
+            status: "ok",
+            waiter: waiter
+        });
+    });
+});
+
+/**
  * GET /orders
  * @description Get orders list.
  * @responseComponent {AuthError} 401
@@ -123,7 +168,7 @@ apiRouter.use(express.urlencoded({ extended: false }));
  */
  apiRouter.get('/orders', requireRole(), function(req, res) {
     let orderRepository = connection.getRepository(Order);
-    orderRepository.find().then((orders: Order[]) => {
+    orderRepository.find({ relations: ["waiter"] }).then((orders: Order[]) => {
         res.json(orders);
     });
 });

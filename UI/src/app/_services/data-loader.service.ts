@@ -19,6 +19,14 @@ export class DataLoaderService {
 
     public foodstuffsListByTypes: any = [];
 
+    public waiters: any = [];
+    public waitersLoad = new Subject();
+    public waitersLoaded = false;
+
+    public orders: any = [];
+    public ordersLoad = new Subject();
+    public ordersLoaded = false;
+
     constructor(private api: ApiClientService) {}
 
     public initialize(token: string) {
@@ -49,6 +57,14 @@ export class DataLoaderService {
             }
             this.foodstuffsListByTypes[data.type.name].push(data);
         });
+        this.io.on("newWaiter", (data: any) => {
+            console.log("newWaiter", data);
+            this.waiters.push(data);
+        });
+        this.io.on("newOrder", (data: any) => {
+            console.log("newOrder", data);
+            this.orders.push(data);
+        });
     }
 
     loadFoodstuffData() {
@@ -73,6 +89,24 @@ export class DataLoaderService {
         });
     }
 
+    loadWaiters() {
+        this.api.get("waiters").then((res) => {
+            console.log(res);
+            this.waiters = res;
+            this.waitersLoad.next();
+            this.waitersLoaded = true;
+        });
+    }
+
+    loadOrders() {
+        this.api.get("orders").then((res) => {
+            console.log(res);
+            this.orders = res;
+            this.ordersLoad.next();
+            this.ordersLoaded = true;
+        });
+    }
+
     getFoodstuffIdByName(foodstuffName: string) {
         for(let foodstuff of this.foodstuffs) {
           if(foodstuff.name == foodstuffName) return foodstuff.id;
@@ -81,5 +115,13 @@ export class DataLoaderService {
 
     getFoodstuffsByType(foodstuffType: string) {
         return this.foodstuffsListByTypes[foodstuffType];
+    }
+
+    getFoodstuffById(foodstuffId: number) {
+        return this.foodstuffs.find((foodstuff: any) => foodstuff.id == foodstuffId);
+    }
+
+    getWaiterNameById(waiterId: number) {
+        return this.waiters.find((waiter: any) => waiter.id == waiterId).name;
     }
 }

@@ -16,6 +16,8 @@ tags:
     description: "Foodstuff type operations"
   - name: "foodstuff"
     description: "Foodstuff operations"
+  - name: "waiters"
+    description: "Waiter operations"
   - name: "orders"
     description: "Orders operations"
   - name: "users"
@@ -90,6 +92,25 @@ components:
               - name
               - price
               - foodstuffTypeId
+    AddWaiterRequest:
+      required: true
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+            required:
+              - name
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+            required:
+              - name
     AddOrderRequest:
       required: true
       content:
@@ -237,6 +258,26 @@ components:
                 example: "ok"
               foodstuff:
                 $ref: '#/components/schemas/Foodstuff'
+    WaitersListResponse:
+      description: "List of waiters"
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Waiter'
+    AddWaiterResponse:
+      description: "Waiter added"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: "ok"
+              waiter:
+                $ref: '#/components/schemas/Waiter'
     OrdersListResponse:
       description: "List of orders"
       content:
@@ -393,6 +434,13 @@ components:
         price:
           type: string
         type:
+          type: string
+    Waiter:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
           type: string
     Order:
       type: object

@@ -19,6 +19,6 @@ export class Foodstuff {
     @Column()
     price: string;
 
-    @ManyToOne(() => FoodstuffType, (type) => type)
+    @ManyToOne(() => FoodstuffType, (type) => type.foodstuffs)
     type: FoodstuffType;
 }

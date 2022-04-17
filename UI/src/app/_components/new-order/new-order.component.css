@@ -30,10 +30,28 @@ td:first-child {
   .buttons_col {
     width: 100%;
   }
+  .align_empty_col {
+    display: none;
+  }
+  #order_info_form_first_row {
+    display: none;
+  }
+  #order_info_form_details {
+    display: block;
+  }
 }
 @media (min-width: 1080px) {
   .buttons_col {
     width: 33.33333333%;
+  }
+  .align_empty_col {
+    display: block;
+  }
+  #order_info_form_first_row {
+    display: block;
+  }
+  #order_info_form_details {
+    display: none;
   }
 }
 .buttons_fieldset > button {
