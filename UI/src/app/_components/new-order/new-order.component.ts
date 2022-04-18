@@ -6,6 +6,7 @@ import { ModalNewWaiterComponent } from '../modal-new-waiter/modal-new-waiter.co
 import { ModalNewFoodstuffTypeComponent } from '../modal-new-foodstuff-type/modal-new-foodstuff-type.component';
 import { ModalNewFoodstuffComponent } from '../modal-new-foodstuff/modal-new-foodstuff.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { first } from 'rxjs/operators';
 //import iziToast from 'izitoast';
 
 @Component({
@@ -41,7 +42,7 @@ export class NewOrderComponent implements OnInit {
     private api: ApiClientService,
     public data: DataLoaderService
   ) {
-    this.data.foodstuffsLoad.subscribe(() => {
+    this.data.foodstuffsLoad.pipe(first()).subscribe(() => {
       this.loadOrderFromLocalStorage();
       
       this.data.foodstuffTypes.map((t: any) => t.name).forEach((type: string) => {

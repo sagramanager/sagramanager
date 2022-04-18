@@ -76,11 +76,12 @@ export class DataLoaderService {
         });
         this.api.get("foodstuffs").then((res) => {
             console.log(res);
+            this.foodstuffsListByTypes = [];
             res.forEach((foodstuff: any) => {
-              if(typeof(this.foodstuffsListByTypes[foodstuff.type.name]) === "undefined") {
-                this.foodstuffsListByTypes[foodstuff.type.name] = [];
-              }
-              this.foodstuffsListByTypes[foodstuff.type.name].push(foodstuff);
+                if(typeof(this.foodstuffsListByTypes[foodstuff.type.name]) === "undefined") {
+                    this.foodstuffsListByTypes[foodstuff.type.name] = [];
+                }
+                this.foodstuffsListByTypes[foodstuff.type.name].push(foodstuff);
             });
             console.log(this.foodstuffsListByTypes);
             this.foodstuffs = res;
