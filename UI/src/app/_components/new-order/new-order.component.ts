@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, TemplateRef } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiClientService } from '../../_services/api-client.service';
 import { DataLoaderService } from '../../_services/data-loader.service';
@@ -29,6 +29,10 @@ export class NewOrderComponent implements OnInit {
     notes: new FormControl(''),
     takeAway: new FormControl(false)
   });
+
+  notesTextareaContent = "";
+  notesTextareaSelectedFoodstuff = "";
+  notesTextareaSelectedFoodstuffType = "";
 
   money_types_list = ["10_cents", "20_cents", "50_cents", "1_euros", "2_euros", "5_euros", "10_euros", "50_euros"];
 
@@ -275,5 +279,17 @@ export class NewOrderComponent implements OnInit {
 
   openNewFoodstuffTypeModal() {
     this.modalService.open(ModalNewFoodstuffTypeComponent);
+  }
+
+  openNotesModal(notesModal: TemplateRef<any>, foodstuff_type_name: string, foodstuff_name: string) {
+    this.notesTextareaSelectedFoodstuff = foodstuff_name;
+    this.notesTextareaSelectedFoodstuffType = foodstuff_type_name;
+    this.notesTextareaContent = this.currentOrderByTypes[foodstuff_type_name][foodstuff_name]["notes"];
+    this.modalService.open(notesModal);
+  }
+
+  notesChange(e: Event) {
+    this.currentOrderByTypes[this.notesTextareaSelectedFoodstuffType][this.notesTextareaSelectedFoodstuff]["notes"] = this.notesTextareaContent;
+    this.saveOrderInLocalStorage();
   }
 }

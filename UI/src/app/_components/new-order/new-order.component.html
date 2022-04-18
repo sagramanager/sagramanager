@@ -28,7 +28,7 @@
                                             <tbody class="align-middle">
                                                 <ng-container *ngFor="let foodstuff of getFoodstuffsInCurrentOrderByType(foodstuffType.name)">
                                                     <tr *ngIf="hideButtonsCol || foodstuff.quantity > 0" style="font-size: x-large;">
-                                                        <td>{{ foodstuff.name }}</td>
+                                                        <td>{{ foodstuff.name }} <i class="fas fa-sticky-note" (click)="openNotesModal(notesModal, foodstuffType.name, foodstuff.name)"></i></td>
                                                         <td>{{ foodstuff.quantity }}
                                                             <div class="btn-group" role="group">
                                                                 <button class="btn btn-success" (click)="sumFoodstuffQuantity(foodstuffType.name, foodstuff.name)"><i class="fas fa-plus"></i></button>
@@ -129,4 +129,17 @@
             </div>
         </div>
     </form>
+</ng-template>
+
+<ng-template #notesModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Inserisci note</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.close()"></button>
+    </div>
+    <div class="modal-body">
+        <textarea class="form-control" ngbAutofocus rows="3" [(ngModel)]="notesTextareaContent" (ngModelChange)="notesChange($event)"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-dark" (click)="modal.close()">Chiudi</button>
+    </div>
 </ng-template>
